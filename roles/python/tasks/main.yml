@@ -1,0 +1,20 @@
+---
+
+- name: Install Python
+  become: yes
+  yum:
+    name:
+      - python3
+      - python3-pip
+    state: present
+  tags:
+    - python
+
+- name: Update pip
+  become: yes
+  pip:
+    name: pip
+    state: latest
+    executable: pip3
+  tags:
+    - python

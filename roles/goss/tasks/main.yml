@@ -1,0 +1,7 @@
+---
+
+- name: Install goss
+  become: yes
+  shell: curl -fsSL https://goss.rocks/install | sh
+  tags:
+    - goss

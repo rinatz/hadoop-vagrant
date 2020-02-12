@@ -1,0 +1,19 @@
+---
+
+- name: Add repository
+  become: yes
+  yum_repository:
+    name: AmazonCorretto
+    description: Amazon Corretto
+    baseurl: https://yum.corretto.aws/$basearch
+    gpgkey: https://yum.corretto.aws/corretto.key
+    gpgcheck: yes
+  tags:
+    - java
+
+- name: Install Amazon Corretto
+  become: yes
+  yum:
+    name: java-1.8.0-amazon-corretto-devel
+  tags:
+    - java

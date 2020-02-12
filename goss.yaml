@@ -1,0 +1,47 @@
+---
+
+command:
+  amazon-corretto:
+    title: Check Amazon Corretto installed
+    exec: java -version
+    exit-status: 0
+    stderr:
+      - Corretto-8
+
+  hadoop-home:
+    title: Check HADOOP_HOME configured
+    exec: printenv HADOOP_HOME
+    exit-status: 0
+
+  hadoop-hdfs-home:
+    title: Check HADOOP_HDFS_HOME configured
+    exec: printenv HADOOP_HDFS_HOME
+    exit-status: 0
+
+  hadoop-mapred-home:
+    title: Check HADOOP_MAPRED_HOME configured
+    exec: printenv HADOOP_MAPRED_HOME
+    exit-status: 0
+
+  hadoop-yarn-home:
+    title: Check HADOOP_YARN_HOME configured
+    exec: printenv HADOOP_YARN_HOME
+    exit-status: 0
+
+  hadoop-user:
+    title: Check user directory exists
+    exec: hadoop fs -test -d /user/vagrant
+    exit-status: 0
+
+  hadoop-mapreduce:
+    title: Check MapReduce example succeeds
+    exec: |
+      set -eu
+      hadoop fs -rm -r -f input output
+      hadoop fs -mkdir input
+      hadoop fs -put ${HADOOP_CONF_DIR}/*.xml input
+      hadoop jar ${HADOOP_MAPRED_HOME}/hadoop-mapreduce-examples.jar grep input output 'dfs[a-z.]+'
+      hadoop fs -cat output/*
+      hadoop fs -rm -r -f input output
+    exit-status: 0
+    timeout: 60000

@@ -1,0 +1,98 @@
+---
+
+- name: Add repository
+  become: yes
+  yum_repository:
+    name: cloudera-cdh
+    description: Cloudera's distribution for Hadoop
+    baseurl: https://archive.cloudera.com/cdh6/6.3.2/redhat7/yum
+    gpgkey: https://archive.cloudera.com/cdh6/6.3.2/redhat7/yum/RPM-GPG-KEY-cloudera
+    gpgcheck: yes
+  tags:
+    - hadoop
+
+- name: Install Hadoop in pseudo-distributed mode
+  become: yes
+  yum:
+    name: hadoop-conf-pseudo
+  tags:
+    - hadoop
+
+- name: Configure bigtop-utils
+  become: yes
+  replace:
+    path: /etc/default/bigtop-utils
+    regexp: ^# export JAVA_HOME$
+    replace: export JAVA_HOME=/usr/lib/jvm/jre
+  tags:
+    - hadoop
+
+- name: Configure mapred-site.xml
+  become: yes
+  replace:
+    path: /etc/hadoop/conf/mapred-site.xml
+    regexp: HADOOP_MAPRED_HOME=\$HADOOP_COMMON_HOME
+    replace: HADOOP_MAPRED_HOME=$HADOOP_MAPRED_HOME
+  tags:
+    - hadoop
+
+- name: Format NameNode
+  become: yes
+  become_user: hdfs
+  shell: hdfs namenode -format
+  tags:
+    - hadoop
+    - hadoop:init
+
+- name: Start HDFS
+  become: yes
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - hadoop-hdfs-namenode
+    - hadoop-hdfs-datanode
+    - hadoop-hdfs-secondarynamenode
+  tags:
+    - hadoop
+
+- name: Create directories needed for Hadoop processes
+  become: yes
+  shell: /usr/lib/hadoop/libexec/init-hdfs.sh
+  tags:
+    - hadoop
+    - hadoop:init
+
+- name: Start YARN
+  become: yes
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - hadoop-yarn-resourcemanager
+    - hadoop-yarn-nodemanager
+    - hadoop-mapreduce-historyserver
+  tags:
+    - hadoop
+
+- name: Create user directories
+  become: yes
+  become_user: hdfs
+  shell: |
+    if ! hadoop fs -test -d /user/vagrant; then
+      hadoop fs -mkdir /user/vagrant
+      hadoop fs -chown vagrant /user/vagrant
+    fi
+  tags:
+    - hadoop
+
+- name: Set environment variables
+  become: yes
+  copy:
+    src: /etc/default/hadoop
+    dest: /etc/profile.d/hadoop.sh
+    remote_src: yes
+  tags:
+    - hadoop

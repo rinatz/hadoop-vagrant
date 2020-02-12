@@ -1,0 +1,10 @@
+---
+
+- hosts: all
+  roles:
+    - java
+    - python
+    - hadoop
+    - postgresql
+    - hive
+    - goss

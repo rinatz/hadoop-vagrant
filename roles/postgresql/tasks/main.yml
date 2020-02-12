@@ -1,0 +1,27 @@
+---
+
+- name: Install PostgreSQL
+  become: yes
+  yum:
+    name: postgresql-server
+  tags:
+    - postgresql
+
+- name: Initialize database
+  become: yes
+  become_user: postgres
+  shell: postgresql-setup initdb
+  environment:
+    PGSETUP_INITDB_OPTIONS: --encoding=UTF8 --locale=en_US.UTF-8
+  tags:
+    - postgresql
+    - postgresql:init
+
+- name: Start PostgreSQL server
+  become: yes
+  systemd:
+    name: postgresql
+    state: restarted
+    enabled: yes
+  tags:
+    - postgresql
