@@ -5,6 +5,7 @@
     - java
     - python
     - hadoop
+    - mariadb
     - postgresql
     - hive
     - goss
