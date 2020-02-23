@@ -27,12 +27,19 @@
   tags:
     - hadoop
 
+- name: Configure core-site.xml
+  become: yes
+  copy:
+    src: core-site.xml
+    dest: /etc/hadoop/conf
+  tags:
+    - hadoop
+
 - name: Configure mapred-site.xml
   become: yes
-  replace:
-    path: /etc/hadoop/conf/mapred-site.xml
-    regexp: HADOOP_MAPRED_HOME=\$HADOOP_COMMON_HOME
-    replace: HADOOP_MAPRED_HOME=$HADOOP_MAPRED_HOME
+  copy:
+    src: mapred-site.xml
+    dest: /etc/hadoop/conf
   tags:
     - hadoop
 

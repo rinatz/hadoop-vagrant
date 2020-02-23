@@ -3,7 +3,9 @@
 - name: Install PostgreSQL
   become: yes
   yum:
-    name: postgresql-server
+    name:
+      - postgresql-server
+      - postgresql-jdbc
   tags:
     - postgresql
 

@@ -3,7 +3,9 @@
 - name: Install MariaDB
   become: yes
   yum:
-    name: mariadb-server
+    name:
+      - mariadb-server
+      - mysql-connector-java
   tags:
     - mariadb
 
@@ -13,36 +15,5 @@
     name: mariadb
     state: restarted
     enabled: yes
-  tags:
-    - mariadb
-
-- name: Create temporary directory
-  tempfile:
-    state: directory
-  register: tmp
-  tags:
-    - mariadb
-
-- name: Download MySQL JDBC
-  unarchive:
-    src: https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz
-    dest: "{{ tmp.path }}"
-    remote_src: yes
-  tags:
-    - mariadb
-
-- name: Create install directory
-  become: yes
-  file:
-    path: /usr/share/java
-    state: directory
-  tags:
-    - mariadb
-
-- name: Copy MySQL JDBC to install directory
-  become: yes
-  copy:
-    src: "{{ tmp.path }}/mysql-connector-java-5.1.46/mysql-connector-java-5.1.46-bin.jar"
-    dest: /usr/share/java/mysql-connector-java.jar
   tags:
     - mariadb

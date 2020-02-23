@@ -45,3 +45,8 @@ command:
       hadoop fs -rm -r -f input output
     exit-status: 0
     timeout: 60000
+
+  beeline-show-tables:
+    title: Check Hive installed
+    exec: beeline -u jdbc:hive2://localhost:10000 -e "SHOW TABLES;"
+    exit-status: 0

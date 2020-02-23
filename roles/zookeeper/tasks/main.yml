@@ -1,0 +1,23 @@
+---
+
+- name: Install Zookeeper
+  become: yes
+  yum:
+    name:
+      - zookeeper
+      - zookeeper-server
+  tags:
+    - zookeeper
+
+- name: Initialize Zookeeper
+  become: yes
+  shell: service zookeeper-server init --myid=1
+  tags:
+    - zookeeper
+    - zookeeper:init
+
+- name: Start Zookeeper
+  become: yes
+  shell: service zookeeper-server start
+  tags:
+    - zookeeper
